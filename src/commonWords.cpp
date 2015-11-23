@@ -18,33 +18,52 @@ NOTES: If there are no common words return NULL.
 
 char ** commonWords(char *str1, char *str2) {
 	char **common;
-	common = (char**)malloc(sizeof(char) * SIZE);
-	int i, j,st1=0,st2=0,flag;
-	if (str1 && str2)
-	{
-		//i = 0; j = 0;
-		while (str1[i] && str2[j])
-		{
-			flag = 0;
-			for (i = st1,j=st2; str1[i] && str2[j] && str1[i] != ' ' && str2[j]!=' '; i++,j++)
-			{
-				if (str1[i] != str2[i])
+	int i, j, si = 0, sj = 0, f,co,count=-1,set=0,a;
+	common = (char**)malloc(sizeof(char*) * SIZE);
+	for (i = 0; i < SIZE; i++)
+		common[i] = (char*)malloc(sizeof(char)*SIZE);
+	if (str1 && str2){
+		do{
+			do{
+				for (i = 0; str1[i] && str1[i] == ' '; i++);
+				if (str1[i] == '\0')
 				{
-					break; flag = 1;
+					si = i;
+					break;
 				}
+				i = si; j = sj; set = 0;
+				for (j = sj; str1[i] && str2[j] && str1[i] == str2[j] && str1[i] != ' '&&str2[j] != ' '; j++, i++);
+				if (str1[i] && str2[j] && str1[i] != str2[j])
+				{
+					for (sj = j; str2[sj] && str2[sj] != ' '; sj++);
+					j = sj;
+					for (sj = j; str2[sj] && str2[sj] == ' '; sj++);
+				}
+				else{
+					set = 1;
+					for (co = i - 1; str1[co] != ' '&& co > 0; co--);
+					if (co == 0)
+						co = -1;
+					for (f = co + 1,a=0, count = count + 1; str1[f] && str1[f] != ' '; f++,a++)
+					{
+						common[count][a] = str1[f];
+					}
+					common[count][a] = '\0';
+					for (si = i; str1[si] && str1[si] == ' '; si++);
+					sj = 0;
+				}
+			} while (str1[si] && str2[sj]);
+			if (str1[si] == '\0')
+				break;
+			if (set==0){
+				for (i = si; str1[i] && str1[i] != ' '; i++);
+				for (si = i; str1[si] && str1[si] == ' '; si++);
+				sj = 0;
 			}
-			if (flag)
-			{
-				for (st1 = i; str1[st1] != ' '; st1++);
-			}
-			else{
-
-				for (st1 = i; str1[st1] != ' '; st1++);
-				for (st2 = j; str2[st2] != ' '; st2++);
-			}
-			st1++;
-		}
-
+		} while (str1[si]);
+		if (count == -1)
+			return NULL;
+		return common;
 	}
 	return NULL;
 }
